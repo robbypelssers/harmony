@@ -13,13 +13,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import static com.pelssers.fixtures.UserApiFixtures.newUser;
-
 @RunWith(VertxUnitRunner.class)
-public abstract class AbstractApiVerticleTest {
+public abstract class AbstractVerticleTest {
 
     protected ApplicationContext applicationContext;
     protected Vertx vertx;
@@ -32,7 +29,6 @@ public abstract class AbstractApiVerticleTest {
         port = applicationContext.getEnvironment().getProperty(HarmonyProperties.HTTP_PORT, Integer.class);
         host = applicationContext.getEnvironment().getProperty(HarmonyProperties.HOST);
         vertx = applicationContext.getBean(Vertx.class);
-        vertx.deployVerticle(new ApiVerticle(applicationContext), context.asyncAssertSuccess());
     }
 
     @After
