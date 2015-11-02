@@ -7,6 +7,10 @@
   <artifactId>harmony</artifactId>
   <version>1.0-SNAPSHOT</version>
 
+  <properties>
+    <spring.version>4.1.7.RELEASE</spring.version>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>io.vertx</groupId>
@@ -17,6 +21,23 @@
       <groupId>io.vertx</groupId>
       <artifactId>vertx-web</artifactId>
       <version>3.0.0</version>
+    </dependency>
+
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+      <version>${spring.version}</version>
     </dependency>
 
     <dependency>
@@ -59,7 +80,7 @@
                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                   <manifestEntries>
                     <Main-Class>io.vertx.core.Starter</Main-Class>
-                    <Main-Verticle>com.pelssersconsultancy.verticle.Verticle1</Main-Verticle>
+                    <Main-Verticle>com.pelssers.verticle.ApiVerticle</Main-Verticle>
                   </manifestEntries>
                 </transformer>
               </transformers>

@@ -1,7 +1,7 @@
-package com.pelssersconsultancy.repository;
+package com.pelssers.repository;
 
 
-import com.pelssersconsultancy.domain.rest.User;
+import com.pelssers.domain.rest.User;
 
 import java.util.*;
 
@@ -17,7 +17,7 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     @Override
-    public Optional<User> findUser(String email) {
+    public Optional<User> findOne(String email) {
         return Optional.ofNullable(users.get(email));
     }
 

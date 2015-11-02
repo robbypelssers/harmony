@@ -1,8 +1,8 @@
-package com.pelssersconsultancy.service;
+package com.pelssers.service;
 
 
-import com.pelssersconsultancy.domain.rest.User;
-import com.pelssersconsultancy.repository.UserRepository;
+import com.pelssers.domain.rest.User;
+import com.pelssers.repository.UserRepository;
 
 import java.util.*;
 
@@ -20,8 +20,8 @@ public class DefaultUserService implements UserService {
     }
 
     @Override
-    public Optional<User> findUser(String email) {
-        return userRepository.findUser(email);
+    public Optional<User> findOne(String email) {
+        return userRepository.findOne(email);
     }
 
     @Override

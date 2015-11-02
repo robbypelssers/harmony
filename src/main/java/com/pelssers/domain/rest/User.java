@@ -1,14 +1,14 @@
-package com.pelssersconsultancy.domain.rest;
+package com.pelssers.domain.rest;
 
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class User {
 
     private String id;
     private String firstName;
     private String lastName;
-    private Date birthDay;
+    private LocalDate birthDay;
     private String email;
 
     public User withId(String id) {
@@ -26,7 +26,7 @@ public class User {
         return this;
     }
 
-    public User withBirthDay(Date birthDay) {
+    public User withBirthDay(LocalDate birthDay) {
         this.birthDay = birthDay;
         return this;
     }
@@ -48,7 +48,7 @@ public class User {
         return lastName;
     }
 
-    public Date getBirthDay() {
+    public LocalDate getBirthDay() {
         return birthDay;
     }
 
@@ -68,7 +68,7 @@ public class User {
         this.lastName = lastName;
     }
 
-    public void setBirthDay(Date birthDay) {
+    public void setBirthDay(LocalDate birthDay) {
         this.birthDay = birthDay;
     }
 
