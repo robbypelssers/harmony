@@ -3,7 +3,8 @@ package com.pelssers.verticle;
 
 import static com.pelssers.fixtures.UserApiFixtures.*;
 
-import io.vertx.ext.unit.Async;
+import com.pelssers.domain.rest.User;
+import io.vertx.core.json.Json;
 import io.vertx.ext.unit.TestContext;
 import org.junit.Test;
 
@@ -11,23 +12,15 @@ public class UserApiTests extends AbstractApiVerticleTest {
 
     @Test
     public void createUser(TestContext context) {
-        final Async async = context.async();
-
-        String json = newUser();
-        String length = Integer.toString(json.length());
-
-
-        //@formatter:off
-        vertx.createHttpClient()
-                .post(port, host, "/api/user")
-                .putHeader("content-type", "application/json")
-                .putHeader("content-length", length)
-                .handler(response -> {
-                    context.assertEquals(response.statusCode(), 201);
-                    context.assertTrue(response.headers().get("content-type").contains("application/json"));
-                })
-                .write(json)
-                .end();
-        //@formatter:on
+        User newUser = newUser();
+        post(context, "/api/users", newUser, response -> {
+            context.assertEquals(response.statusCode(), 201);
+            context.assertTrue(response.headers().get("content-type").contains("application/json"));
+            response.bodyHandler(body -> {
+                User userCreated = Json.decodeValue(body.toString(), User.class);
+                context.assertNotNull(userCreated.getId());
+                context.assertEquals("Robby", userCreated.getFirstName());
+            });
+        });
     }
 }

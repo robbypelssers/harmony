@@ -1,6 +1,11 @@
 package com.pelssers.domain.rest;
 
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.pelssers.serialization.LocalDateDeserializer;
+import com.pelssers.serialization.LocalDateSerializer;
+
 import java.time.LocalDate;
 
 public class User {
@@ -8,8 +13,12 @@ public class User {
     private String id;
     private String firstName;
     private String lastName;
-    private LocalDate birthDay;
     private String email;
+
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonSerialize(using = LocalDateSerializer.class)
+    private LocalDate birthDay;
+
 
     public User withId(String id) {
         this.id = id;

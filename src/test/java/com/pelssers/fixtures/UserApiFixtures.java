@@ -9,13 +9,12 @@ import java.time.Month;
 
 public class UserApiFixtures {
 
-    public static String newUser() {
-        User user = new User()
-//                .withBirthDay(LocalDate.of(1977, Month.FEBRUARY, 7))
+    public static User newUser() {
+        return new User()
+                .withBirthDay(LocalDate.of(1977, Month.FEBRUARY, 7))
                 .withEmail("robby.pelssers@gmail.com")
                 .withFirstName("Robby")
                 .withLastName("Pelssers");
-        return Json.encodePrettily(user);
     }
 
 }
