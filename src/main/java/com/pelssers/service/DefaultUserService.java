@@ -1,8 +1,9 @@
 package com.pelssers.service;
 
 
+import com.pelssers.domain.UserAlreadyExistsException;
 import com.pelssers.domain.rest.User;
-import com.pelssers.repository.UserRepository;
+import com.pelssers.repository.users.UserRepository;
 
 import java.util.*;
 
@@ -15,7 +16,7 @@ public class DefaultUserService implements UserService {
     }
 
     @Override
-    public User createUser(User user) {
+    public User createUser(User user) throws UserAlreadyExistsException {
         return userRepository.createUser(user);
     }
 

@@ -1,7 +1,7 @@
 package com.pelssers.context;
 
-import com.pelssers.repository.InMemoryUserRepository;
-import com.pelssers.repository.UserRepository;
+import com.pelssers.repository.users.InMemoryUserRepository;
+import com.pelssers.repository.users.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

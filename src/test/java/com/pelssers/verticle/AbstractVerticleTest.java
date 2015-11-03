@@ -1,5 +1,6 @@
 package com.pelssers.verticle;
 
+import com.pelssers.HarmonyExceptionMessage;
 import com.pelssers.context.HarmonyProperties;
 import com.pelssers.context.HarmonyTestConfiguration;
 import io.vertx.core.Handler;
@@ -13,6 +14,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 @RunWith(VertxUnitRunner.class)
@@ -34,6 +36,11 @@ public abstract class AbstractVerticleTest {
     @After
     public void tearDown(TestContext context) {
         vertx.close(context.asyncAssertSuccess());
+        ((ConfigurableApplicationContext)applicationContext).close();
+    }
+
+    public Handler<HttpClientResponse> emptyHandler() {
+        return response -> {};
     }
 
     public Handler<HttpClientResponse> responseLogHandler() {
@@ -46,6 +53,16 @@ public abstract class AbstractVerticleTest {
                 System.out.println("****************************************************");
             });
         };
+    }
+
+    public void get(TestContext context, String uri, Handler<HttpClientResponse>... handlers ) {
+        final Async async = context.async();
+        vertx.createHttpClient().getNow(port, host, uri, response -> {
+            for (Handler<HttpClientResponse> handler : handlers) {
+                handler.handle(response);
+                async.complete();
+            }
+        });
     }
 
 
@@ -63,11 +80,29 @@ public abstract class AbstractVerticleTest {
                     for (Handler<HttpClientResponse> handler : handlers) {
                         handler.handle(response);
                     }
+
                     async.complete();
+
                 })
                 .write(json)
                 .end();
         //@formatter:on
+    }
+
+    public void assertStatus(TestContext context, HttpClientResponse response, int status) {
+        context.assertEquals(response.statusCode(), status);
+    }
+
+    public void assertContentTypeIsJson(TestContext context, HttpClientResponse response) {
+        context.assertTrue(response.headers().get("content-type").contains("application/json"));
+    }
+
+    public void assertException(TestContext context, HttpClientResponse response, String message, String type) {
+        response.bodyHandler(body -> {
+            HarmonyExceptionMessage exception = Json.decodeValue(body.toString(), HarmonyExceptionMessage.class);
+            context.assertEquals(message, exception.getMessage());
+            context.assertEquals(type, exception.getType());
+        });
     }
 
 

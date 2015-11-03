@@ -1,16 +1,20 @@
-package com.pelssers.repository;
+package com.pelssers.repository.users;
 
 
+import com.pelssers.domain.UserAlreadyExistsException;
 import com.pelssers.domain.rest.User;
 
 import java.util.*;
 
 public class InMemoryUserRepository implements UserRepository {
 
-    private final static Map<String, User> users = new HashMap<>();
+    private final Map<String, User> users = new HashMap<>();
 
     @Override
-    public User createUser(User user) {
+    public User createUser(User user) throws UserAlreadyExistsException {
+        if (users.containsKey(user.getEmail())) {
+            throw new UserAlreadyExistsException(user.getEmail());
+        }
         user.setId(UUID.randomUUID().toString());
         users.put(user.getEmail(), user);
         return user;

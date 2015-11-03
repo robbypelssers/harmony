@@ -1,5 +1,6 @@
 package com.pelssers.controller;
 
+import com.pelssers.domain.UserAlreadyExistsException;
 import com.pelssers.domain.rest.User;
 import com.pelssers.service.UserService;
 import io.vertx.core.json.Json;
@@ -26,8 +27,12 @@ public class UserController extends AbstractController {
 
     public void create(RoutingContext routingContext) {
         final User user = Json.decodeValue(routingContext.getBodyAsString(), User.class);
-        User newUser = userService.createUser(user);
-        create(routingContext, newUser);
+        try {
+            User newUser = userService.createUser(user);
+            create(routingContext, newUser);
+        } catch (UserAlreadyExistsException e)   {
+            conflict(routingContext, e);
+        }
     }
 
 
