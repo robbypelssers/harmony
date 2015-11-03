@@ -1,19 +1,21 @@
 package com.pelssers.repository.users;
 
 
-import com.pelssers.domain.UserAlreadyExistsException;
+import com.pelssers.context.ApiExceptionMessages;
+import com.pelssers.domain.Conflict;
+import com.pelssers.domain.NotFound;
 import com.pelssers.domain.rest.User;
 
 import java.util.*;
 
-public class InMemoryUserRepository implements UserRepository {
+public class InMemoryUserRepository implements UserRepository, ApiExceptionMessages {
 
     private final Map<String, User> users = new HashMap<>();
 
     @Override
-    public User createUser(User user) throws UserAlreadyExistsException {
+    public User createUser(User user) throws Conflict {
         if (users.containsKey(user.getEmail())) {
-            throw new UserAlreadyExistsException(user.getEmail());
+            throw new Conflict(String.format(USER_ALREADY_EXISTS, user.getEmail()));
         }
         user.setId(UUID.randomUUID().toString());
         users.put(user.getEmail(), user);
@@ -21,8 +23,11 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     @Override
-    public Optional<User> findOne(String email) {
-        return Optional.ofNullable(users.get(email));
+    public User findOne(String email) throws NotFound {
+        if (users.containsKey(email)) {
+            return users.get(email);
+        }
+        throw new NotFound(String.format(USER_NOT_FOUND, email));
     }
 
     @Override

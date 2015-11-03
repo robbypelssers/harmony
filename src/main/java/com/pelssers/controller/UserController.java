@@ -1,14 +1,14 @@
 package com.pelssers.controller;
 
-import com.pelssers.domain.UserAlreadyExistsException;
+import com.pelssers.context.ApiParameters;
+import com.pelssers.domain.Conflict;
+import com.pelssers.domain.NotFound;
 import com.pelssers.domain.rest.User;
 import com.pelssers.service.UserService;
 import io.vertx.core.json.Json;
 import io.vertx.ext.web.RoutingContext;
 
-public class UserController extends AbstractController {
-
-    public static final String PARAM_EMAIL = "email";
+public class UserController extends AbstractController implements ApiParameters {
 
     private final UserService userService;
 
@@ -21,8 +21,13 @@ public class UserController extends AbstractController {
     }
 
     public void findOne(RoutingContext routingContext) {
-        String email = routingContext.request().getParam(PARAM_EMAIL);
-        get(routingContext, userService.findOne(email));
+        String email = getParameter(routingContext, EMAIL);
+        try {
+            User user = userService.findOne(email);
+            get(routingContext, user);
+        } catch (NotFound e) {
+            notFound(routingContext, e);
+        }
     }
 
     public void create(RoutingContext routingContext) {
@@ -30,7 +35,7 @@ public class UserController extends AbstractController {
         try {
             User newUser = userService.createUser(user);
             create(routingContext, newUser);
-        } catch (UserAlreadyExistsException e)   {
+        } catch (Conflict e)   {
             conflict(routingContext, e);
         }
     }

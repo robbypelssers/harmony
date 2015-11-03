@@ -8,13 +8,14 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 
 
-public class ApiVerticle extends AbstractVerticle implements HarmonyProperties{
+public class HttpVerticle extends AbstractVerticle implements HarmonyProperties {
 
     private final Router router;
     private final Environment environment;
 
-    public ApiVerticle(ApplicationContext context) {
+    public HttpVerticle(ApplicationContext context) {
         router = context.getBean(Router.class);
+
         environment = context.getBean(Environment.class);
     }
 

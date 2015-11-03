@@ -1,5 +1,7 @@
 package com.pelssers;
 
+import com.pelssers.domain.HarmonyException;
+
 public class HarmonyExceptionMessage {
 
     private String message;

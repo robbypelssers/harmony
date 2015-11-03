@@ -16,6 +16,7 @@ import org.junit.runner.RunWith;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import java.io.IOException;
 
 @RunWith(VertxUnitRunner.class)
 public abstract class AbstractVerticleTest {
@@ -26,11 +27,12 @@ public abstract class AbstractVerticleTest {
     protected String host;
 
     @Before
-    public void setUp(TestContext context) {
+    public void setUp(TestContext context) throws IOException {
         applicationContext = new AnnotationConfigApplicationContext(HarmonyTestConfiguration.class);
         port = applicationContext.getEnvironment().getProperty(HarmonyProperties.HTTP_PORT, Integer.class);
         host = applicationContext.getEnvironment().getProperty(HarmonyProperties.HOST);
         vertx = applicationContext.getBean(Vertx.class);
+        vertx.deployVerticle(new HttpVerticle(applicationContext), context.asyncAssertSuccess());
     }
 
     @After

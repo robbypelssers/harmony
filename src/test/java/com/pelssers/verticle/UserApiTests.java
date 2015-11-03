@@ -2,27 +2,31 @@ package com.pelssers.verticle;
 
 
 import static com.pelssers.fixtures.UserApiFixtures.*;
+
+import com.pelssers.context.ApiExceptionMessages;
 import com.pelssers.domain.rest.User;
 import io.vertx.core.json.Json;
 import io.vertx.ext.unit.TestContext;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.IOException;
 import java.util.Arrays;
 
 
-public class UserApiTests extends AbstractVerticleTest {
+public class UserApiTests extends AbstractVerticleTest implements ApiExceptionMessages {
 
     @Before
-    public void setUp(TestContext context) {
+    public void setUp(TestContext context) throws IOException {
         super.setUp(context);
-        vertx.deployVerticle(new ApiVerticle(applicationContext), context.asyncAssertSuccess());
+
         //insert two users Robby and Lindsey
         Arrays.asList(userRobby(), userLindsey()).forEach(user -> post(context, "/api/users", user, emptyHandler()));
     }
 
     @Test
     public void getUsers(TestContext context) {
-       get(context, "/api/users",  response -> {
+       get(context, "/api/users", response -> {
            assertStatus(context, response, 200);
            assertContentTypeIsJson(context, response);
            response.bodyHandler(body -> {
@@ -30,6 +34,30 @@ public class UserApiTests extends AbstractVerticleTest {
                context.assertTrue(users.length == 2);
            });
        });
+    }
+
+    @Test
+    public void findUser(TestContext context) {
+        get(context, "/api/users/robby.pelssers@gmail.com", response -> {
+            assertStatus(context, response, 200);
+            assertContentTypeIsJson(context, response);
+            response.bodyHandler(body -> {
+                User user = Json.decodeValue(body.toString(), User.class);
+                context.assertEquals("Robby", user.getFirstName());
+                context.assertEquals("Pelssers", user.getLastName());
+            });
+        });
+    }
+
+    @Test
+    public void findNonExistingUser(TestContext context) {
+        final String email = "notexisting.pelssers@gmail.com";
+        get(context, "/api/users/" + email, response -> {
+            assertStatus(context, response, 404);
+            assertContentTypeIsJson(context, response);
+            assertException(context, response, String.format(USER_NOT_FOUND, email),
+                    "com.pelssers.domain.NotFound");
+        });
     }
 
     @Test
@@ -47,12 +75,13 @@ public class UserApiTests extends AbstractVerticleTest {
 
     @Test
     public void createExistingUser(TestContext context) {
+        User userRobby = userRobby();
         //try to insert user which already exists
-        post(context, "/api/users", userRobby(), response2 -> {
+        post(context, "/api/users", userRobby, response2 -> {
             assertStatus(context, response2, 409);
             assertContentTypeIsJson(context, response2);
-            assertException(context, response2, "User already exists with email 'robby.pelssers@gmail.com'.",
-                    "com.pelssers.domain.UserAlreadyExistsException");
+            assertException(context, response2, String.format(USER_ALREADY_EXISTS, userRobby.getEmail()),
+                    "com.pelssers.domain.Conflict");
         });
     }
 

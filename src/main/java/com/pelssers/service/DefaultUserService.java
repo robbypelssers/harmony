@@ -1,7 +1,8 @@
 package com.pelssers.service;
 
 
-import com.pelssers.domain.UserAlreadyExistsException;
+import com.pelssers.domain.Conflict;
+import com.pelssers.domain.NotFound;
 import com.pelssers.domain.rest.User;
 import com.pelssers.repository.users.UserRepository;
 
@@ -16,12 +17,12 @@ public class DefaultUserService implements UserService {
     }
 
     @Override
-    public User createUser(User user) throws UserAlreadyExistsException {
+    public User createUser(User user) throws Conflict {
         return userRepository.createUser(user);
     }
 
     @Override
-    public Optional<User> findOne(String email) {
+    public User findOne(String email) throws NotFound {
         return userRepository.findOne(email);
     }
 

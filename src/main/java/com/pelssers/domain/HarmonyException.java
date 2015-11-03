@@ -1,4 +1,4 @@
-package com.pelssers;
+package com.pelssers.domain;
 
 public class HarmonyException extends Exception {
 
