@@ -3,7 +3,7 @@ package com.pelssers.verticle;
 
 import static com.pelssers.fixtures.UserApiFixtures.*;
 
-import com.pelssers.context.ApiExceptionMessages;
+import com.pelssers.context.ApiMessages;
 import com.pelssers.domain.rest.User;
 import io.vertx.core.json.Json;
 import io.vertx.ext.unit.TestContext;
@@ -11,10 +11,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.Arrays;
 
 
-public class UserApiTests extends AbstractVerticleTest implements ApiExceptionMessages {
+public class UserApiTests extends AbstractVerticleTest implements ApiMessages {
 
     @Before
     public void setUp(TestContext context) throws IOException {
@@ -56,7 +58,7 @@ public class UserApiTests extends AbstractVerticleTest implements ApiExceptionMe
             assertStatus(context, response, 404);
             assertContentTypeIsJson(context, response);
             assertException(context, response, String.format(USER_NOT_FOUND, email),
-                    "com.pelssers.domain.NotFound");
+                    "ResourceNotFound");
         });
     }
 
@@ -81,8 +83,16 @@ public class UserApiTests extends AbstractVerticleTest implements ApiExceptionMe
             assertStatus(context, response2, 409);
             assertContentTypeIsJson(context, response2);
             assertException(context, response2, String.format(USER_ALREADY_EXISTS, userRobby.getEmail()),
-                    "com.pelssers.domain.Conflict");
+                    "Conflict");
         });
+    }
+
+    @Test
+    public void updateExistingUser(TestContext context) {
+        final LocalDate birthDay = LocalDate.of(1977, Month.JANUARY, 10);
+        User userRobby = userRobby();
+        userRobby.setBirthDay(birthDay);
+        put(context, "/api/users", userRobby, responseLogHandler());
     }
 
 

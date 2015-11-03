@@ -1,6 +1,6 @@
 package com.pelssers.verticle;
 
-import com.pelssers.HarmonyExceptionMessage;
+import com.pelssers.domain.HarmonyExceptionMessage;
 import com.pelssers.context.HarmonyProperties;
 import com.pelssers.context.HarmonyTestConfiguration;
 import io.vertx.core.Handler;
@@ -85,6 +85,26 @@ public abstract class AbstractVerticleTest {
 
                     async.complete();
 
+                })
+                .write(json)
+                .end();
+        //@formatter:on
+    }
+
+    public void put(TestContext context, String uri, Object payload, Handler<HttpClientResponse>... handlers) {
+        final Async async = context.async();
+        String json = Json.encodePrettily(payload);
+        String length = Integer.toString(json.length());
+        //@formatter:off
+        vertx.createHttpClient()
+                .put(port, host, uri)
+                .putHeader("content-type", "application/json")
+                .putHeader("content-length", length)
+                .handler(response -> {
+                    for (Handler<HttpClientResponse> handler : handlers) {
+                        handler.handle(response);
+                    }
+                    async.complete();
                 })
                 .write(json)
                 .end();

@@ -1,6 +1,5 @@
-package com.pelssers;
+package com.pelssers.domain;
 
-import com.pelssers.domain.HarmonyException;
 
 public class HarmonyExceptionMessage {
 
@@ -13,15 +12,7 @@ public class HarmonyExceptionMessage {
 
     public HarmonyExceptionMessage(HarmonyException exception) {
         this.message = exception.getMessage();
-        this.type = exception.getClass().getName();
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public void setType(String type) {
-        this.type = type;
+        this.type = exception.getClass().getSimpleName();
     }
 
     public String getMessage() {

@@ -2,7 +2,7 @@ package com.pelssers.service;
 
 
 import com.pelssers.domain.Conflict;
-import com.pelssers.domain.NotFound;
+import com.pelssers.domain.ResourceNotFound;
 import com.pelssers.domain.rest.User;
 import com.pelssers.repository.users.UserRepository;
 
@@ -22,8 +22,13 @@ public class DefaultUserService implements UserService {
     }
 
     @Override
-    public User findOne(String email) throws NotFound {
+    public User findOne(String email) throws ResourceNotFound {
         return userRepository.findOne(email);
+    }
+
+    @Override
+    public void update(User user) throws ResourceNotFound {
+         userRepository.update(user);
     }
 
     @Override

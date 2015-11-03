@@ -2,10 +2,10 @@ package com.pelssers.controller;
 
 import com.pelssers.context.ApiParameters;
 import com.pelssers.domain.Conflict;
-import com.pelssers.domain.NotFound;
+import com.pelssers.domain.ResourceNotFound;
+import com.pelssers.domain.UnprocessableEntity;
 import com.pelssers.domain.rest.User;
 import com.pelssers.service.UserService;
-import io.vertx.core.json.Json;
 import io.vertx.ext.web.RoutingContext;
 
 public class UserController extends AbstractController implements ApiParameters {
@@ -25,18 +25,32 @@ public class UserController extends AbstractController implements ApiParameters 
         try {
             User user = userService.findOne(email);
             get(routingContext, user);
-        } catch (NotFound e) {
-            notFound(routingContext, e);
+        } catch (ResourceNotFound resourceNotFound) {
+            notFound(routingContext, resourceNotFound);
+        }
+    }
+
+    public void update(RoutingContext routingContext) {
+        try {
+            final User user = getPayload(routingContext, User.class);
+            userService.update(user);
+            noContent(routingContext);
+        } catch (ResourceNotFound resourceNotFound) {
+            notFound(routingContext, resourceNotFound);
+        } catch (UnprocessableEntity unprocessableEntity) {
+            unprocessable(routingContext, unprocessableEntity);
         }
     }
 
     public void create(RoutingContext routingContext) {
-        final User user = Json.decodeValue(routingContext.getBodyAsString(), User.class);
         try {
+            final User user = getPayload(routingContext, User.class);
             User newUser = userService.createUser(user);
             create(routingContext, newUser);
-        } catch (Conflict e)   {
-            conflict(routingContext, e);
+        } catch (Conflict conflict)   {
+            conflict(routingContext, conflict);
+        } catch (UnprocessableEntity unprocessableEntity) {
+            unprocessable(routingContext, unprocessableEntity);
         }
     }
 
