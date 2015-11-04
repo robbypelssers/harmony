@@ -18,7 +18,7 @@ public abstract class AbstractController  implements ApiMessages{
     }
 
     public void error(RoutingContext routingContext, HarmonyException e, int statusCode) {
-        toJson(routingContext, statusCode, new HarmonyExceptionMessage(e));
+        toJson(routingContext, statusCode, e.liftException());
     }
 
     public void conflict(RoutingContext routingContext, Conflict e) {
