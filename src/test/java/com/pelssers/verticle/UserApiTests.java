@@ -57,8 +57,7 @@ public class UserApiTests extends AbstractVerticleTest implements ApiMessages {
         get(context, "/api/users/" + email, response -> {
             assertStatus(context, response, 404);
             assertContentTypeIsJson(context, response);
-            assertException(context, response, String.format(USER_NOT_FOUND, email),
-                    "ResourceNotFound");
+            assertException(context, response, String.format(USER_NOT_FOUND, email), "ResourceNotFound");
         });
     }
 
@@ -82,8 +81,7 @@ public class UserApiTests extends AbstractVerticleTest implements ApiMessages {
         post(context, "/api/users", userRobby, response2 -> {
             assertStatus(context, response2, 409);
             assertContentTypeIsJson(context, response2);
-            assertException(context, response2, String.format(USER_ALREADY_EXISTS, userRobby.getEmail()),
-                    "Conflict");
+            assertException(context, response2, String.format(USER_ALREADY_EXISTS, userRobby.getEmail()), "Conflict");
         });
     }
 
@@ -92,7 +90,18 @@ public class UserApiTests extends AbstractVerticleTest implements ApiMessages {
         final LocalDate birthDay = LocalDate.of(1977, Month.JANUARY, 10);
         User userRobby = userRobby();
         userRobby.setBirthDay(birthDay);
-        put(context, "/api/users", userRobby, responseLogHandler());
+        put(context, "/api/users", userRobby, response -> assertStatus(context, response, 204));
+    }
+
+    @Test
+    public void updateNonExistingUser(TestContext context) {
+        User userDavy = userDavy();
+        put(context, "/api/users", userDavy, response -> {
+            assertStatus(context, response, 404);
+            assertContentTypeIsJson(context, response);
+            assertException(context, response, String.format(USER_NOT_FOUND, userDavy.getEmail()), "ResourceNotFound");
+        });
+
     }
 
 
