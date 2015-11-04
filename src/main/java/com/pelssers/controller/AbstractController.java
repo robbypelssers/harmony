@@ -2,10 +2,8 @@ package com.pelssers.controller;
 
 
 import com.pelssers.context.ApiMessages;
-import com.pelssers.context.ApiParameters;
 import com.pelssers.domain.*;
 import io.vertx.core.http.HttpServerResponse;
-import io.vertx.core.json.DecodeException;
 import io.vertx.core.json.Json;
 import io.vertx.ext.web.RoutingContext;
 
