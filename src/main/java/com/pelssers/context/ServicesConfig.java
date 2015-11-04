@@ -1,8 +1,8 @@
 package com.pelssers.context;
 
 
-import com.pelssers.service.DefaultUserService;
-import com.pelssers.service.UserService;
+import com.pelssers.service.users.DefaultUserService;
+import com.pelssers.service.users.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

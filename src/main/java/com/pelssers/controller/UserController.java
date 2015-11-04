@@ -1,11 +1,8 @@
 package com.pelssers.controller;
 
 import com.pelssers.context.ApiParameters;
-import com.pelssers.domain.Conflict;
-import com.pelssers.domain.ResourceNotFound;
-import com.pelssers.domain.UnprocessableEntity;
 import com.pelssers.domain.rest.User;
-import com.pelssers.service.UserService;
+import com.pelssers.service.users.UserService;
 import io.vertx.ext.web.RoutingContext;
 
 public class UserController extends AbstractController implements ApiParameters {
@@ -17,41 +14,31 @@ public class UserController extends AbstractController implements ApiParameters 
     }
 
     public void findAll(RoutingContext routingContext) {
-        get(routingContext, userService.findAll());
+        userService.getUsers().handle(users -> get(routingContext, users));
     }
 
     public void findOne(RoutingContext routingContext) {
         String email = getParameter(routingContext, EMAIL);
-        try {
-            User user = userService.findOne(email);
-            get(routingContext, user);
-        } catch (ResourceNotFound resourceNotFound) {
-            notFound(routingContext, resourceNotFound);
-        }
+        userService.findUser(email).handle(
+                user -> get(routingContext, user),
+                resourceNotFound -> notFound(routingContext, resourceNotFound)
+        );
     }
 
     public void update(RoutingContext routingContext) {
-        try {
-            final User user = getPayload(routingContext, User.class);
-            userService.update(user);
-            noContent(routingContext);
-        } catch (ResourceNotFound resourceNotFound) {
-            notFound(routingContext, resourceNotFound);
-        } catch (UnprocessableEntity unprocessableEntity) {
-            unprocessable(routingContext, unprocessableEntity);
-        }
+        getPayloadCommand(routingContext, User.class).handle(
+            user -> userService.updateUser(user).handle(
+                        x -> noContent(routingContext),
+                        resourceNotFound -> notFound(routingContext, resourceNotFound)),
+            unprocessableEntity -> unprocessable(routingContext, unprocessableEntity));
     }
 
     public void create(RoutingContext routingContext) {
-        try {
-            final User user = getPayload(routingContext, User.class);
-            User newUser = userService.createUser(user);
-            create(routingContext, newUser);
-        } catch (Conflict conflict)   {
-            conflict(routingContext, conflict);
-        } catch (UnprocessableEntity unprocessableEntity) {
-            unprocessable(routingContext, unprocessableEntity);
-        }
+        getPayloadCommand(routingContext, User.class).handle(
+                user -> userService.createUser(user).handle(
+                        newUser -> create(routingContext, newUser),
+                        conflict -> conflict(routingContext, conflict)),
+                unprocessableEntity -> unprocessable(routingContext, unprocessableEntity));
     }
 
 

@@ -3,9 +3,7 @@ package com.pelssers.controller;
 
 import com.pelssers.context.ApiMessages;
 import com.pelssers.context.ApiParameters;
-import com.pelssers.domain.HarmonyException;
-import com.pelssers.domain.HarmonyExceptionMessage;
-import com.pelssers.domain.UnprocessableEntity;
+import com.pelssers.domain.*;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.DecodeException;
 import io.vertx.core.json.Json;
@@ -25,15 +23,15 @@ public abstract class AbstractController  implements ApiMessages{
         toJson(routingContext, statusCode, new HarmonyExceptionMessage(e));
     }
 
-    public void conflict(RoutingContext routingContext, HarmonyException e) {
+    public void conflict(RoutingContext routingContext, Conflict e) {
         error(routingContext, e, 409);
     }
 
-    public void notFound(RoutingContext routingContext, HarmonyException e) {
+    public void notFound(RoutingContext routingContext, ResourceNotFound e) {
         error(routingContext, e, 404);
     }
 
-    public void unprocessable(RoutingContext routingContext, HarmonyException e) {
+    public void unprocessable(RoutingContext routingContext, UnprocessableEntity e) {
         error(routingContext, e, 422);
     }
 
@@ -52,13 +50,8 @@ public abstract class AbstractController  implements ApiMessages{
                 .end(Json.encodePrettily(object));
     }
 
-    public <T> T getPayload(RoutingContext routingContext, Class<T> clazz) throws UnprocessableEntity{
-        try {
-            T payload = Json.decodeValue(routingContext.getBodyAsString(), clazz);
-            return payload;
-        } catch(DecodeException e) {
-            throw new UnprocessableEntity(String.format(UNPROCESSABLE_ENTITY, routingContext.getBodyAsString()));
-        }
+    public <T> GetPayloadCommand<T> getPayloadCommand(RoutingContext routingContext, Class<T> clazz) {
+        return new GetPayloadCommand<T>(routingContext, clazz);
     }
 
 }
