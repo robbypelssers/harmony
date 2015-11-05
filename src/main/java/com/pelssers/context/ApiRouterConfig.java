@@ -1,6 +1,6 @@
 package com.pelssers.context;
 
-import com.pelssers.controller.UserController;
+import com.pelssers.controller.UserApiController;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +23,12 @@ public class ApiRouterConfig  {
 
     public Router userApiRouter() {
         Router userApiRouter = Router.router(vertxConfig.vertx());
-        UserController userController = controllerConfig.userController();
-        userApiRouter.get("/").handler(userController::findAll);
-        userApiRouter.get("/:email").handler(userController::findOne);
+        UserApiController userApiController = controllerConfig.userController();
+        userApiRouter.get("/").handler(userApiController::findAll);
+        userApiRouter.get("/:email").handler(userApiController::findOne);
         userApiRouter.route("/*").handler(BodyHandler.create());
-        userApiRouter.post("/").handler(userController::create);
-        userApiRouter.put("/").handler(userController::update);
+        userApiRouter.post("/").handler(userApiController::createUser);
+        userApiRouter.put("/").handler(userApiController::updateUser);
         return userApiRouter;
     }
 
