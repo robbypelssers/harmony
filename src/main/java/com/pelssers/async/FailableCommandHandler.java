@@ -11,6 +11,10 @@ public class FailableCommandHandler<S,T extends Throwable> {
         this.failableCommand = failableCommand;
     }
 
+    public static <S,T extends Throwable> FailableCommandHandler<S,T> from(FailableCommand<S,T> failableCommand) {
+        return new FailableCommandHandler<>(failableCommand);
+    }
+
     public void handle(Handler<S> successHandler, Handler<T> errorHandler) {
         try {
             successHandler.handle(failableCommand.execute());
