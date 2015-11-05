@@ -42,11 +42,7 @@ public abstract class AbstractApiController implements ApiMessages{
     public void unprocessable(RoutingContext routingContext, UnprocessableEntity e) {
         error(routingContext, e, 422);
     }
-
-
-
-
-
+    
     private void toJson(RoutingContext routingContext, int statusCode, Object object) {
         HttpServerResponse response = routingContext.response();
         response.setStatusCode(statusCode);
@@ -55,8 +51,9 @@ public abstract class AbstractApiController implements ApiMessages{
     }
 
     public <T> FailableCommandHandler<T, UnprocessableEntity> getPayloadHandler(RoutingContext context, Class<T> clazz,
-                      Handler<T> succesHandler, Handler<UnprocessableEntity> errorHandler) {
-        return FailableCommandHandler.from(new GetPayloadCommand<T>(context, clazz), succesHandler, errorHandler);
+                      Handler<T> succesHandler) {
+        return FailableCommandHandler.from(new GetPayloadCommand<>(context, clazz), succesHandler,
+                unprocessableEntity -> unprocessable(context, unprocessableEntity));
     }
 
 }

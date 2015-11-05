@@ -1,11 +1,8 @@
 package com.pelssers.controller;
 
 import com.pelssers.async.CommandHandler;
-import com.pelssers.async.FailableCommand;
 import com.pelssers.async.FailableCommandHandler;
 import com.pelssers.context.ApiParameters;
-import com.pelssers.domain.ResourceNotFound;
-import com.pelssers.domain.UnprocessableEntity;
 import com.pelssers.domain.rest.User;
 import com.pelssers.service.users.UserService;
 import io.vertx.ext.web.RoutingContext;
@@ -36,8 +33,7 @@ public class UserApiController extends AbstractApiController implements ApiParam
                 user ->  FailableCommandHandler.from(
                             userService.updateUser(user),
                             x -> update(routingContext),
-                            resourceNotFound -> notFound(routingContext, resourceNotFound)).handle(),
-                unprocessableEntity -> unprocessable(routingContext, unprocessableEntity)
+                            resourceNotFound -> notFound(routingContext, resourceNotFound)).handle()
         ).handle();
     }
 
@@ -46,8 +42,7 @@ public class UserApiController extends AbstractApiController implements ApiParam
                 user ->  FailableCommandHandler.from(
                             userService.createUser(user),
                             newUser -> create(routingContext, newUser),
-                            conflict -> conflict(routingContext, conflict)).handle(),
-                unprocessableEntity -> unprocessable(routingContext, unprocessableEntity)
+                            conflict -> conflict(routingContext, conflict)).handle()
         ).handle();
     }
 

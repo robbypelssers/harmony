@@ -19,7 +19,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import java.io.IOException;
 
 @RunWith(VertxUnitRunner.class)
-public abstract class AbstractVerticleTest {
+public abstract class AbstractApiTest {
 
     protected ApplicationContext applicationContext;
     protected Vertx vertx;

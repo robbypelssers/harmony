@@ -16,7 +16,7 @@ import java.time.Month;
 import java.util.Arrays;
 
 
-public class UserApiTests extends AbstractVerticleTest implements ApiMessages {
+public class UserApiTests extends AbstractApiTest implements ApiMessages {
 
     @Before
     public void setUp(TestContext context) throws IOException {
