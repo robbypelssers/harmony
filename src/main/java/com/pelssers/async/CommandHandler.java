@@ -5,17 +5,19 @@ import io.vertx.core.Handler;
 
 public class CommandHandler<S> {
 
-    private Command<S> command;
+    private final Command<S> command;
+    private final Handler<S> handler;
 
-    public CommandHandler(Command<S> command) {
+    public CommandHandler(Command<S> command, Handler<S> handler) {
         this.command = command;
+        this.handler = handler;
     }
 
-    public static <S> CommandHandler<S> from(Command<S> command) {
-        return new CommandHandler<>(command);
+    public static <S> CommandHandler<S> from(Command<S> command, Handler<S> handler) {
+        return new CommandHandler<>(command, handler);
     }
 
-    public void handle(Handler<S> handler) {
+    public void handle() {
         handler.handle(command.execute());
     }
 }

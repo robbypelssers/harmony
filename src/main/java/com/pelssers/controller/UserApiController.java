@@ -19,7 +19,7 @@ public class UserApiController extends AbstractApiController implements ApiParam
     }
 
     public void findAll(RoutingContext routingContext) {
-        CommandHandler.from(userService.getUsers()).handle(users -> get(routingContext, users));
+        CommandHandler.from(userService.getUsers(), users -> get(routingContext, users)).handle();
     }
 
     public void findOne(RoutingContext routingContext) {
@@ -44,9 +44,9 @@ public class UserApiController extends AbstractApiController implements ApiParam
     public void createUser(RoutingContext routingContext) {
         getPayloadHandler(routingContext, User.class,
                 user ->  FailableCommandHandler.from(
-                        userService.createUser(user),
+                            userService.createUser(user),
                             newUser -> create(routingContext, newUser),
-                        conflict -> conflict(routingContext, conflict)).handle(),
+                            conflict -> conflict(routingContext, conflict)).handle(),
                 unprocessableEntity -> unprocessable(routingContext, unprocessableEntity)
         ).handle();
     }
